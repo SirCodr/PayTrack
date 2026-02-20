@@ -3,16 +3,19 @@
 import CardList from '@/app/debt/_components/card-list'
 import CreditCardForm from '@/components/credit-card-form'
 import { mockCards } from '@/lib/mock-data'
-import { CreditCard, Plus } from 'lucide-react'
+import { CreditCard } from '@/types/credit-card'
+import { CreditCard as CreditCardIcon, Plus } from 'lucide-react'
 import { useState } from 'react'
 
 export default function DebtsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [formData, setFormData] = useState({
-    cardName: '',
-    cardNumber: '',
-    cardType: '',
-    creditLimit: ''
+  const [formData, setFormData] = useState<CreditCard>({
+    id: '',
+    name: '',
+    limit: 0,
+    interestRate: 0,
+    cutoffDate: 0,
+    payDate: 0
   })
 
   const handleInputChange = (e) => {
@@ -33,7 +36,7 @@ export default function DebtsPage() {
           <div className='flex justify-between items-center'>
             <div className='flex items-center gap-3'>
               <div className='flex items-center justify-center w-9 h-9 rounded-lg bg-sky-700 text-white'>
-                <CreditCard size={20} />
+                <CreditCardIcon size={20} />
               </div>
               <div>
                 <h1 className='text-base font-bold text-slate-900'>TCDebt</h1>

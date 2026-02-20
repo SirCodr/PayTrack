@@ -1,13 +1,7 @@
-export interface Card {
-  id: string
-  name: string
-  cutDate: number // dia del mes (1-31)
-  payDate: number // dia del mes (auto-calculado: cutDate + 15)
-  limit: number // limite de credito
-  currentBalance: number // saldo actual utilizado
-  brand: CardBrand
-  color: CardColor
-  lastFourDigits: string
+import { CreditCard } from './credit-card'
+
+export interface Card extends CreditCard {
+  currentBalance: number
 }
 
 export type CardBrand = 'visa' | 'mastercard' | 'amex'

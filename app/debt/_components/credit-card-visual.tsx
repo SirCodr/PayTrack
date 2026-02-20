@@ -3,12 +3,6 @@
 import type { Card as CardType } from '@/types/card'
 import { CreditCard, Wifi } from 'lucide-react'
 
-const brandLogos: Record<string, string> = {
-  visa: 'VISA',
-  mastercard: 'MC',
-  amex: 'AMEX'
-}
-
 const colorGradients: Record<string, string> = {
   blue: 'from-sky-900 to-sky-400',
   dark: 'from-slate-900 to-slate-700',
@@ -21,11 +15,11 @@ interface CreditCardVisualProps {
 }
 
 export default function CreditCardVisual({ card }: CreditCardVisualProps) {
-  const gradient = colorGradients[card.color] ?? colorGradients.blue
+  const gradient = colorGradients.dark
 
   return (
     <div
-      className={`relative w-full max-w-[360px] aspect-[1.586] rounded-xl bg-gradient-to-br ${gradient} p-5 text-white overflow-hidden shadow-lg select-none`}
+      className={`relative w-full max-w-90 aspect-[1.586] rounded-xl bg-linear-to-br ${gradient} p-5 text-white overflow-hidden shadow-lg select-none`}
     >
       {/* Patron decorativo */}
       <div className='absolute -top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-white/10' />
@@ -42,7 +36,7 @@ export default function CreditCardVisual({ card }: CreditCardVisualProps) {
         {/* Chip */}
         <div className='flex items-center gap-3 my-2'>
           <div
-            className='w-10 h-[30px] rounded-md'
+            className='w-10 h-7.5 rounded-md'
             style={{
               background:
                 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 50%, #D4AF37 100%)'
@@ -52,16 +46,13 @@ export default function CreditCardVisual({ card }: CreditCardVisualProps) {
 
         {/* Numero */}
         <p className='text-lg font-medium tracking-[0.15em] font-mono'>
-          {'**** **** **** ' + card.lastFourDigits}
+          {'**** **** **** ****'}
         </p>
 
         {/* Footer: marca */}
         <div className='flex justify-end items-center mt-1'>
           <div className='flex items-center gap-1'>
             <CreditCard size={16} className='opacity-80' />
-            <span className='text-base font-bold opacity-90'>
-              {brandLogos[card.brand]}
-            </span>
           </div>
         </div>
       </div>

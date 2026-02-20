@@ -1,4 +1,18 @@
-export default function CreditCardForm({ onSubmit, formData, onInputChange }) {
+import { CreditCard } from '@/types/credit-card'
+
+type CreditCardFormProps = {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  formData: CreditCard
+  onInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void
+}
+
+export default function CreditCardForm({
+  onSubmit,
+  formData,
+  onInputChange
+}: CreditCardFormProps) {
   return (
     <form onSubmit={onSubmit}>
       <div className='mb-4'>
@@ -12,46 +26,13 @@ export default function CreditCardForm({ onSubmit, formData, onInputChange }) {
           type='text'
           id='cardName'
           name='cardName'
-          value={formData.cardName}
+          value={formData.name}
           onChange={onInputChange}
           className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
           placeholder='Ej. BBVA Platinum'
         />
       </div>
-      <div className='mb-4'>
-        <label
-          htmlFor='cardNumber'
-          className='block text-sm font-medium text-gray-700'
-        >
-          Número de tarjeta
-        </label>
-        <input
-          type='text'
-          id='cardNumber'
-          name='cardNumber'
-          value={formData.cardNumber}
-          onChange={onInputChange}
-          className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
-          placeholder='**** **** **** ****'
-        />
-      </div>
-      <div className='mb-4'>
-        <label
-          htmlFor='cardType'
-          className='block text-sm font-medium text-gray-700'
-        >
-          Tipo de tarjeta
-        </label>
-        <input
-          type='text'
-          id='cardType'
-          name='cardType'
-          value={formData.cardType}
-          onChange={onInputChange}
-          className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
-          placeholder='Ej. VISA, MasterCard'
-        />
-      </div>
+
       <div className='mb-4'>
         <label
           htmlFor='creditLimit'
@@ -68,6 +49,44 @@ export default function CreditCardForm({ onSubmit, formData, onInputChange }) {
           className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
           placeholder='$0.00'
         />
+      </div>
+
+      <div className='mb-4'>
+        <label
+          htmlFor='interestRate'
+          className='block text-sm font-medium text-gray-700'
+        >
+          Tasa de interés (%)
+        </label>
+        <input
+          type='number'
+          id='interestRate'
+          name='interestRate'
+          value={formData.interestRate}
+          onChange={onInputChange}
+          className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
+          placeholder='Ej. 15.5'
+        />
+      </div>
+
+      <div className='mb-4'>
+        <label
+          htmlFor='cutoffDate'
+          className='block text-sm font-medium text-gray-700'
+        >
+          Fecha de corte
+        </label>
+        <select
+          id='cutoffDate'
+          name='cutoffDate'
+          value={formData.cutoffDate}
+          onChange={onInputChange}
+          className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
+        >
+          <option value=''>Selecciona una fecha</option>
+          <option value='15'>15</option>
+          <option value='30'>30</option>
+        </select>
       </div>
     </form>
   )
