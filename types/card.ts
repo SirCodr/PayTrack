@@ -1,12 +1,13 @@
-import { CreditCard } from './credit-card'
-
-export interface Card extends CreditCard {
+export interface CreditCard {
+  id: string
+  name: string
+  limit: number
+  interestRate: number
+  cutoffDate: string
+  payDate: string
   currentBalance: number
+  createdAt: string
 }
-
-export type CardBrand = 'visa' | 'mastercard' | 'amex'
-
-export type CardColor = 'blue' | 'dark' | 'gold' | 'teal'
 
 export interface CardSummary {
   totalLimit: number

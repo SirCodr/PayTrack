@@ -2,31 +2,45 @@
 
 import CardList from '@/app/debt/_components/card-list'
 import CreditCardForm from '@/components/credit-card-form'
-import { mockCards } from '@/lib/mock-data'
-import { CreditCard } from '@/types/credit-card'
+import { getAllFromStore, saveToStore } from '@/lib/indexeddb'
+import { CreditCard } from '@/types/card'
 import { CreditCard as CreditCardIcon, Plus } from 'lucide-react'
-import { useState } from 'react'
-import { saveToStore } from '@/lib/indexeddb'
+import { useEffect, useState } from 'react'
 
 const initialFormData: CreditCard = {
   id: '',
   name: '',
-  limit: '0',
-  interestRate: '0',
+  limit: 0,
+  interestRate: 0,
   cutoffDate: '0',
-  payDate: '0'
+  payDate: '0',
+  createdAt: '',
+  currentBalance: 0
 }
 
 export default function DebtsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CreditCard>(initialFormData)
+  const [cards, setCards] = useState<CreditCard[]>([])
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      const storedCards = await getAllFromStore('cards')
+      setCards(storedCards)
+    }
+
+    fetchCards()
+  }, [])
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value, type } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value
+    }))
   }
 
   const handleSubmit = async (
@@ -35,27 +49,22 @@ export default function DebtsPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    const newCard = {
+    const newCard: CreditCard = {
       id: crypto.randomUUID(),
       name: formData.name,
       limit: formData.limit,
       interestRate: formData.interestRate,
       cutoffDate: formData.cutoffDate,
       payDate: formData.cutoffDate === '15' ? '30' : '15', // Alterna entre 15 y 30
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      currentBalance: 0
     }
 
     try {
       await saveToStore('cards', newCard)
       console.log('Card saved to IndexedDB:', newCard)
-      setFormData({
-        id: '',
-        name: '',
-        limit: '0',
-        interestRate: '0',
-        cutoffDate: '0',
-        payDate: '0'
-      })
+      setCards((prev) => [...prev, newCard])
+      setFormData(initialFormData)
       setIsModalOpen(false)
     } catch (error) {
       console.error('Error saving card:', error)
@@ -103,7 +112,7 @@ export default function DebtsPage() {
           </p>
         </div>
 
-        <CardList cards={mockCards} />
+        <CardList cards={cards} />
       </main>
 
       {/* Modal */}

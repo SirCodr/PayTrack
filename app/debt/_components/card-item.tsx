@@ -1,13 +1,13 @@
 'use client'
 
-import type { Card as CardType } from '@/types/card'
 import CreditCardVisual from '@/app/debt/_components/credit-card-visual'
 import CardInfoPanel from '@/app/debt/_components/card-info-panel'
 import { useRouter } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
+import { CreditCard } from '@/types/card'
 
 interface CardItemProps {
-  card: CardType
+  card: CreditCard
 }
 
 export default function CardItem({ card }: CardItemProps) {

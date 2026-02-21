@@ -1,17 +1,22 @@
 'use client'
 
-import type { Card as CardType, CardSummary } from '@/types/card'
+import type { CardSummary } from '@/types/card'
 import CardItem from '@/app/debt/_components/card-item'
 import DebtsSummary from '@/app/debt/_components/debts-summary'
-import { CreditCard } from 'lucide-react'
+import { CreditCard as CreditCardIcon } from 'lucide-react'
+import { CreditCard } from '@/types/card'
 
 interface CardListProps {
-  cards: CardType[]
+  cards: CreditCard[]
 }
 
-function computeSummary(cards: CardType[]): CardSummary {
+function computeSummary(cards: CreditCard[]): CardSummary {
   const totalLimit = cards.reduce((acc, c) => acc + c.limit, 0)
-  const totalBalance = cards.reduce((acc, c) => acc + c.currentBalance, 0)
+  const totalBalance = cards.reduce(
+    (acc, c) => acc + (c.currentBalance || 0),
+    0
+  )
+
   return {
     totalLimit,
     totalBalance,
@@ -26,7 +31,7 @@ export default function CardList({ cards }: CardListProps) {
   if (cards.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center py-16 gap-3 text-slate-400'>
-        <CreditCard size={48} />
+        <CreditCardIcon size={48} />
         <p className='text-lg font-medium'>No hay tarjetas registradas</p>
         <p className='text-sm'>
           Agrega tu primera tarjeta de credito para comenzar

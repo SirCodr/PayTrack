@@ -1,12 +1,12 @@
 'use client'
 
-import type { Card as CardType } from '@/types/card'
 import {
   formatCurrency,
   calculateUsagePercent,
   getUsageColor,
   getNextDate
 } from '@/lib/utils/format'
+import { CreditCard } from '@/types/card'
 import { Calendar, Scissors, Wallet } from 'lucide-react'
 
 const usageBadgeStyles: Record<string, string> = {
@@ -24,7 +24,7 @@ const usageBarStyles: Record<string, string> = {
 }
 
 interface CardInfoPanelProps {
-  card: CardType
+  card: CreditCard
 }
 
 export default function CardInfoPanel({ card }: CardInfoPanelProps) {
@@ -74,7 +74,7 @@ export default function CardInfoPanel({ card }: CardInfoPanelProps) {
           <Scissors size={14} className='text-slate-400' />
           <span className='text-xs text-slate-500'>Fecha de corte:</span>
           <span className='text-xs font-semibold text-slate-800'>
-            Dia {card.cutDate}
+            Dia {card.cutoffDate}
           </span>
         </div>
 

@@ -42,7 +42,7 @@ export default function CreditCardForm({
           Límite de crédito
         </label>
         <input
-          type='text'
+          type='number'
           id='creditLimit'
           name='limit'
           value={formData.limit}
