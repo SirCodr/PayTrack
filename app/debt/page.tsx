@@ -6,26 +6,62 @@ import { mockCards } from '@/lib/mock-data'
 import { CreditCard } from '@/types/credit-card'
 import { CreditCard as CreditCardIcon, Plus } from 'lucide-react'
 import { useState } from 'react'
+import { saveToStore } from '@/lib/indexeddb'
+
+const initialFormData: CreditCard = {
+  id: '',
+  name: '',
+  limit: '0',
+  interestRate: '0',
+  cutoffDate: '0',
+  payDate: '0'
+}
 
 export default function DebtsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [formData, setFormData] = useState<CreditCard>({
-    id: '',
-    name: '',
-    limit: 0,
-    interestRate: 0,
-    cutoffDate: 0,
-    payDate: 0
-  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState<CreditCard>(initialFormData)
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = () => {
-    console.log('Form Data:', formData)
-    setIsModalOpen(false)
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement | HTMLButtonElement>
+  ) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    const newCard = {
+      id: crypto.randomUUID(),
+      name: formData.name,
+      limit: formData.limit,
+      interestRate: formData.interestRate,
+      cutoffDate: formData.cutoffDate,
+      payDate: formData.cutoffDate === '15' ? '30' : '15', // Alterna entre 15 y 30
+      createdAt: new Date().toISOString()
+    }
+
+    try {
+      await saveToStore('cards', newCard)
+      console.log('Card saved to IndexedDB:', newCard)
+      setFormData({
+        id: '',
+        name: '',
+        limit: '0',
+        interestRate: '0',
+        cutoffDate: '0',
+        payDate: '0'
+      })
+      setIsModalOpen(false)
+    } catch (error) {
+      console.error('Error saving card:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -77,24 +113,30 @@ export default function DebtsPage() {
             <div className='p-6'>
               <h3 className='text-lg font-bold mb-4'>Agregar nueva tarjeta</h3>
               <CreditCardForm
-                onSubmit={handleSubmit}
                 formData={formData}
                 onInputChange={handleInputChange}
+                onSubmit={handleSubmit}
               />
             </div>
             <div className='flex justify-end gap-3 p-4 border-t border-gray-200'>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg'
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSubmit}
-                className='px-4 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg'
-              >
-                Confirmar
-              </button>
+              {isLoading ? (
+                <p className='text-sm text-gray-500'>Guardando...</p>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg'
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className='px-4 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg'
+                  >
+                    Confirmar
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { PERIOD_DATES } from '@/constants/credit-card'
 import { CreditCard } from '@/types/credit-card'
 
 type CreditCardFormProps = {
@@ -25,7 +26,7 @@ export default function CreditCardForm({
         <input
           type='text'
           id='cardName'
-          name='cardName'
+          name='name'
           value={formData.name}
           onChange={onInputChange}
           className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -43,8 +44,8 @@ export default function CreditCardForm({
         <input
           type='text'
           id='creditLimit'
-          name='creditLimit'
-          value={formData.creditLimit}
+          name='limit'
+          value={formData.limit}
           onChange={onInputChange}
           className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
           placeholder='$0.00'
@@ -84,8 +85,11 @@ export default function CreditCardForm({
           className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
         >
           <option value=''>Selecciona una fecha</option>
-          <option value='15'>15</option>
-          <option value='30'>30</option>
+          {PERIOD_DATES.map((days) => (
+            <option key={days} value={days}>
+              {days}
+            </option>
+          ))}
         </select>
       </div>
     </form>
