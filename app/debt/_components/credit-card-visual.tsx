@@ -1,7 +1,7 @@
 'use client'
 
-import type { Card as CardType } from '@/types/card'
-import { CreditCard, Wifi } from 'lucide-react'
+import { CreditCard } from '@/types/card'
+import { CreditCard as CreditCardIcon, Wifi } from 'lucide-react'
 
 const colorGradients: Record<string, string> = {
   blue: 'from-sky-900 to-sky-400',
@@ -11,7 +11,7 @@ const colorGradients: Record<string, string> = {
 }
 
 interface CreditCardVisualProps {
-  card: CardType
+  card: CreditCard
 }
 
 export default function CreditCardVisual({ card }: CreditCardVisualProps) {
@@ -52,7 +52,7 @@ export default function CreditCardVisual({ card }: CreditCardVisualProps) {
         {/* Footer: marca */}
         <div className='flex justify-end items-center mt-1'>
           <div className='flex items-center gap-1'>
-            <CreditCard size={16} className='opacity-80' />
+            <CreditCardIcon size={16} className='opacity-80' />
           </div>
         </div>
       </div>
