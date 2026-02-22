@@ -21,7 +21,7 @@ export default function DebtsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CreditCard>(initialFormData)
-  const { data: cards, loading: isLoadingCards } = useIndexedStore('cards')
+  const { add, data: cards, loading: isLoadingCards } = useIndexedStore('cards')
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -50,7 +50,7 @@ export default function DebtsPage() {
     }
 
     try {
-      // await saveToStore('cards', newCard)
+      await add(newCard)
       console.log('Card saved to IndexedDB:', newCard)
       setFormData(initialFormData)
       setIsModalOpen(false)
