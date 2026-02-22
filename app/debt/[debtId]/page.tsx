@@ -1,31 +1,59 @@
 'use client'
 
-import { use } from 'react'
+import { use, useEffect, useState } from 'react'
 import { notFound } from 'next/navigation'
-import { mockCards } from '@/lib/mock-data'
-import { getPurchasesByCardId } from '@/lib/mock-purchases'
 import { generateBillingPeriods } from '@/lib/utils/amortization'
-import CardDetailHeader from '@/app/debt/[id]/_components/card-detail-header'
-import BillingPeriodGroup from '@/app/debt/[id]/_components/billing-period-group'
+import CardDetailHeader from '@/app/debt/[debtId]/_components/card-detail-header'
+import BillingPeriodGroup from '@/app/debt/[debtId]/_components/billing-period-group'
 import { formatCurrency } from '@/lib/utils/format'
 import { Receipt } from 'lucide-react'
+import { CreditCard } from '@/types/card'
+import { useIndexedStore } from '@/hooks/useIndexedStore'
+import { Purchase } from '@/types/purchase'
 
 type InstallmentStatus = 'paid' | 'current' | 'future'
 
 export default function CardDetailPage({
   params
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ debtId: string }>
 }) {
-  const { id } = use(params)
-  const card = mockCards.find((c) => c.id === id)
+  const { debtId } = use(params)
+  const { data: cards, loading: isLoadingCards } = useIndexedStore('cards')
+  const { data: purchases, loading: isLoadingPurchases } =
+    useIndexedStore('purchases')
 
-  if (!card) {
-    notFound()
-  }
+  const [card, setCard] = useState<CreditCard | null>(null)
+  const [purchasesData, setPurchasesData] = useState<Purchase[] | null>(null)
+  const [periods, setPeriods] = useState<
+    ReturnType<typeof generateBillingPeriods>
+  >([])
 
-  const purchases = getPurchasesByCardId(card.id)
-  const periods = generateBillingPeriods(card.cutDate, purchases)
+  useEffect(() => {
+    const foundCard = cards.find((c) => c.id === debtId)
+
+    if (foundCard) {
+      setCard(foundCard)
+    }
+  }, [cards, debtId])
+
+  useEffect(() => {
+    if (card) {
+      const filteredPurchases = purchases.filter((p) => p.cardId === card.id)
+      setPurchasesData(filteredPurchases)
+    }
+  }, [purchases])
+
+  useEffect(() => {
+    if (card && purchasesData) {
+      const generatedPeriods = generateBillingPeriods(
+        card.cutoffDate,
+        purchasesData
+      )
+      console.log('Generated periods in useEffect:', generatedPeriods) // Debug: Verifica los períodos generados
+      setPeriods(generatedPeriods)
+    }
+  }, [card, purchasesData])
 
   // Determinar estado de cada periodo
   const now = new Date()
@@ -35,19 +63,34 @@ export default function CardDetailPage({
     if (endDate < now) return 'paid'
     return 'future'
   }
+  console.log('Períodos generados:', periods)
+  console.log('purchases:', purchasesData)
 
-  // Calcular totales globales
   const totalFutureDebt = periods
     .filter((p) => !p.isCurrent && new Date(p.endDate) >= now)
     .reduce((sum, p) => sum + p.totalPeriod, 0)
   const currentPeriod = periods.find((p) => p.isCurrent)
 
+  if (isLoadingCards || isLoadingPurchases) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <p className='text-sm text-slate-500'>
+          Cargando detalles de la tarjeta...
+        </p>
+      </div>
+    )
+  }
+
+  if (!isLoadingCards && !card) {
+    notFound()
+  }
+
   return (
     <div className='min-h-screen bg-slate-50'>
-      <CardDetailHeader card={card} />
+      <CardDetailHeader card={card!} />
 
       {/* Resumen de la tarjeta */}
-      <div className='px-4 -mt-0 relative z-10'>
+      <div className='px-4 mt-0 relative z-10'>
         <div className='bg-white rounded-xl border border-slate-200 p-4 flex gap-4 shadow-sm'>
           <div className='flex-1 text-center'>
             <p className='text-xs text-slate-500 mb-0.5'>Este periodo</p>
@@ -68,7 +111,7 @@ export default function CardDetailPage({
           <div className='flex-1 text-center'>
             <p className='text-xs text-slate-500 mb-0.5'>Compras</p>
             <p className='text-lg font-bold text-slate-900'>
-              {purchases.length}
+              {purchasesData?.length || 0}
             </p>
           </div>
         </div>

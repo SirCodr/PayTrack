@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import type { BillingPeriod } from '@/types/purchase'
-import InstallmentRow from '@/app/debt/[id]/_components/installment-row'
-import PeriodSummaryBar from '@/app/debt/[id]/_components/period-summary-bar'
+import InstallmentRow from '@/app/debt/[debtId]/_components/installment-row'
+import PeriodSummaryBar from '@/app/debt/[debtId]/_components/period-summary-bar'
 import { formatCurrency } from '@/lib/utils/format'
 import { ChevronDown } from 'lucide-react'
 

@@ -31,8 +31,8 @@ export function getUsageColor(percent: number): string {
 /**
  * Calcula la fecha de pago a partir de la fecha de corte
  */
-export function calculatePayDate(cutDate: number): number {
-  const payDate = cutDate + 15
+export function calculatePayDate(cutDay: number): number {
+  const payDate = cutDay + 15
   return payDate > 31 ? payDate - 31 : payDate
 }
 
@@ -51,7 +51,6 @@ export function getNextDate(dayOfMonth: number): string {
 
   return new Intl.DateTimeFormat('es-MX', {
     day: 'numeric',
-    month: 'short',
-    year: 'numeric'
+    month: 'short'
   }).format(nextDate)
 }

@@ -2,7 +2,7 @@
 
 import CardList from '@/app/debt/_components/card-list'
 import CreditCardForm from '@/components/credit-card-form'
-import { getAllFromStore, saveToStore } from '@/lib/indexeddb'
+import { useIndexedStore } from '@/hooks/useIndexedStore'
 import { CreditCard } from '@/types/card'
 import { CreditCard as CreditCardIcon, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -11,9 +11,8 @@ const initialFormData: CreditCard = {
   id: '',
   name: '',
   limit: 0,
-  interestRate: 0,
-  cutoffDate: '0',
-  payDate: '0',
+  cutoffDate: 0,
+  payDate: 0,
   createdAt: '',
   currentBalance: 0
 }
@@ -22,24 +21,15 @@ export default function DebtsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CreditCard>(initialFormData)
-  const [cards, setCards] = useState<CreditCard[]>([])
-
-  useEffect(() => {
-    const fetchCards = async () => {
-      const storedCards = await getAllFromStore('cards')
-      setCards(storedCards)
-    }
-
-    fetchCards()
-  }, [])
+  const { data: cards, loading: isLoadingCards } = useIndexedStore('cards')
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target
+    const { name, value, dataset } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value
+      [name]: dataset.type === 'number' ? Number(value) : value
     }))
   }
 
@@ -53,17 +43,15 @@ export default function DebtsPage() {
       id: crypto.randomUUID(),
       name: formData.name,
       limit: formData.limit,
-      interestRate: formData.interestRate,
       cutoffDate: formData.cutoffDate,
-      payDate: formData.cutoffDate === '15' ? '30' : '15', // Alterna entre 15 y 30
+      payDate: formData.cutoffDate === 15 ? 30 : 15, // Alterna entre 15 y 30
       createdAt: new Date().toISOString(),
       currentBalance: 0
     }
 
     try {
-      await saveToStore('cards', newCard)
+      // await saveToStore('cards', newCard)
       console.log('Card saved to IndexedDB:', newCard)
-      setCards((prev) => [...prev, newCard])
       setFormData(initialFormData)
       setIsModalOpen(false)
     } catch (error) {
@@ -112,7 +100,15 @@ export default function DebtsPage() {
           </p>
         </div>
 
-        <CardList cards={cards} />
+        {isLoadingCards ? (
+          <p className='text-sm text-slate-500'>Cargando tarjetas...</p>
+        ) : cards.length === 0 ? (
+          <p className='text-sm text-slate-500'>
+            No tienes tarjetas registradas
+          </p>
+        ) : (
+          <CardList cards={cards} />
+        )}
       </main>
 
       {/* Modal */}

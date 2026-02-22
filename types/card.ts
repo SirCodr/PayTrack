@@ -2,9 +2,8 @@ export interface CreditCard {
   id: string
   name: string
   limit: number
-  interestRate: number
-  cutoffDate: string
-  payDate: string
+  cutoffDate: number
+  payDate: number
   currentBalance: number
   createdAt: string
 }

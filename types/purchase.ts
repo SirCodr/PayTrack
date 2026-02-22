@@ -2,24 +2,12 @@ export interface Purchase {
   id: string
   cardId: string
   description: string
-  category: PurchaseCategory
-  totalAmount: number
+  amount: number
   installments: number
   interestRate: number
-  purchaseDate: string
+  date: string
   firstChargeDate: string
 }
-
-export type PurchaseCategory =
-  | 'hogar'
-  | 'electronica'
-  | 'ropa'
-  | 'alimentos'
-  | 'viajes'
-  | 'entretenimiento'
-  | 'salud'
-  | 'servicios'
-  | 'otros'
 
 export interface PeriodInstallment {
   purchaseId: string

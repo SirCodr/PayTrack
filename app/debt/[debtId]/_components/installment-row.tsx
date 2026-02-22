@@ -58,8 +58,8 @@ export default function InstallmentRow({
     interestAmount
   } = installment
 
-  const Icon = categoryIcons[purchase.category] ?? Package
-  const iconColor = categoryColors[purchase.category] ?? categoryColors.otros
+  const Icon = Package
+  const iconColor = categoryColors.otros
 
   const isOnePayment = totalInstallments === 1
 
@@ -120,7 +120,7 @@ export default function InstallmentRow({
               </p>
               {!isOnePayment && (
                 <p className='text-xs text-slate-400 mt-0.5'>
-                  Total: {formatCurrency(purchase.totalAmount)}
+                  Total: {formatCurrency(purchase.amount)}
                 </p>
               )}
             </div>
