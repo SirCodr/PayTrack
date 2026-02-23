@@ -13,6 +13,8 @@ import { Purchase } from '@/types/purchase'
 
 type InstallmentStatus = 'paid' | 'current' | 'future'
 
+const now = new Date()
+
 export default function CardDetailPage({
   params
 }: {
@@ -24,7 +26,7 @@ export default function CardDetailPage({
     useIndexedStore('purchases')
 
   const [card, setCard] = useState<CreditCard | null>(null)
-  const [purchasesData, setPurchasesData] = useState<Purchase[] | null>(null)
+  const [purchasesData, setPurchasesData] = useState<Purchase[]>([])
   const [periods, setPeriods] = useState<
     ReturnType<typeof generateBillingPeriods>
   >([])
@@ -42,10 +44,10 @@ export default function CardDetailPage({
       const filteredPurchases = purchases.filter((p) => p.cardId === card.id)
       setPurchasesData(filteredPurchases)
     }
-  }, [purchases])
+  }, [card, purchases])
 
   useEffect(() => {
-    if (card && purchasesData) {
+    if (card && purchasesData.length) {
       const generatedPeriods = generateBillingPeriods(
         card.cutoffDate,
         purchasesData
@@ -56,15 +58,21 @@ export default function CardDetailPage({
   }, [card, purchasesData])
 
   // Determinar estado de cada periodo
-  const now = new Date()
   function getPeriodStatus(period: (typeof periods)[0]): InstallmentStatus {
     const endDate = new Date(period.endDate)
+
     if (period.isCurrent) return 'current'
     if (endDate < now) return 'paid'
     return 'future'
   }
-  console.log('Períodos generados:', periods)
+  console.log('card:', card)
   console.log('purchases:', purchasesData)
+  console.log(
+    'isLoadingCards',
+    isLoadingCards,
+    'isLoadingPurchases',
+    isLoadingPurchases
+  )
 
   const totalFutureDebt = periods
     .filter((p) => !p.isCurrent && new Date(p.endDate) >= now)
@@ -111,7 +119,7 @@ export default function CardDetailPage({
           <div className='flex-1 text-center'>
             <p className='text-xs text-slate-500 mb-0.5'>Compras</p>
             <p className='text-lg font-bold text-slate-900'>
-              {purchasesData?.length || 0}
+              {purchasesData.length}
             </p>
           </div>
         </div>
