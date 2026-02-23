@@ -75,7 +75,9 @@ export default function CardDetailPage() {
     'isLoadingCards:',
     isLoadingCards,
     'isLoadingPurchases:',
-    isLoadingPurchases
+    isLoadingPurchases,
+    'debtId:',
+    debtId
   )
 
   const totalFutureDebt = periods
