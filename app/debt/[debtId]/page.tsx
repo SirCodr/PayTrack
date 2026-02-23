@@ -21,37 +21,10 @@ export default function CardDetailPage() {
   const { data: purchases, loading: isLoadingPurchases } =
     useIndexedStore('purchases')
 
-  const [card, setCard] = useState<CreditCard | null>(null)
-  const [purchasesData, setPurchasesData] = useState<Purchase[]>([])
-  const [periods, setPeriods] = useState<
-    ReturnType<typeof generateBillingPeriods>
-  >([])
-
-  useEffect(() => {
-    const foundCard = cards.find((c) => c.id === debtId)
-
-    if (foundCard) {
-      setCard(foundCard)
-    }
-  }, [cards, debtId])
-
-  useEffect(() => {
-    if (card) {
-      const filteredPurchases = purchases.filter((p) => p.cardId === card.id)
-      setPurchasesData(filteredPurchases)
-    }
-  }, [card, purchases])
-
-  useEffect(() => {
-    if (card && purchasesData.length) {
-      const generatedPeriods = generateBillingPeriods(
-        card.cutoffDate,
-        purchasesData
-      )
-      console.log('Generated periods in useEffect:', generatedPeriods) // Debug: Verifica los períodos generados
-      setPeriods(generatedPeriods)
-    }
-  }, [card, purchasesData])
+  const card = cards.find((c) => c.id === debtId)
+  const purchasesData = purchases.filter((p) => p.cardId === card?.id)
+  const periods: ReturnType<typeof generateBillingPeriods> =
+    generateBillingPeriods(card?.cutoffDate || 0, purchasesData)
 
   // Determinar estado de cada periodo
   function getPeriodStatus(period: (typeof periods)[0]): InstallmentStatus {
