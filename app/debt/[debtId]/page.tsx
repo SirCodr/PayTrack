@@ -65,12 +65,20 @@ export default function CardDetailPage({
     if (endDate < now) return 'paid'
     return 'future'
   }
-  console.log('card:', card)
-  console.log('purchases:', purchasesData)
   console.log(
-    'isLoadingCards',
+    'cards:',
+    cards,
+    'card:',
+    card,
+    'all purchases:',
+    purchases,
+    'filtered purchases:',
+    purchasesData,
+    'periods:',
+    periods,
+    'isLoadingCards:',
     isLoadingCards,
-    'isLoadingPurchases',
+    'isLoadingPurchases:',
     isLoadingPurchases
   )
 
