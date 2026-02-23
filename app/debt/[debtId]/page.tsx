@@ -95,8 +95,14 @@ export default function CardDetailPage() {
     )
   }
 
-  if (!isLoadingCards && !card) {
-    notFound()
+  if (!card) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <p className='text-sm text-slate-500'>
+          No se encontró la tarjeta solicitada.
+        </p>
+      </div>
+    )
   }
 
   return (
