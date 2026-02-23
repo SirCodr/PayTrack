@@ -1,7 +1,7 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
-import { notFound } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { notFound, useParams } from 'next/navigation'
 import { generateBillingPeriods } from '@/lib/utils/amortization'
 import CardDetailHeader from '@/app/debt/[debtId]/_components/card-detail-header'
 import BillingPeriodGroup from '@/app/debt/[debtId]/_components/billing-period-group'
@@ -15,12 +15,8 @@ type InstallmentStatus = 'paid' | 'current' | 'future'
 
 const now = new Date()
 
-export default function CardDetailPage({
-  params
-}: {
-  params: Promise<{ debtId: string }>
-}) {
-  const { debtId } = use(params)
+export default function CardDetailPage() {
+  const { debtId } = useParams()
   const { data: cards, loading: isLoadingCards } = useIndexedStore('cards')
   const { data: purchases, loading: isLoadingPurchases } =
     useIndexedStore('purchases')
