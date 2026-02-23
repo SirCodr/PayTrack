@@ -13,10 +13,14 @@ export function useIndexedStore<K extends keyof Stores>(storeName: K) {
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async () => {
-    const db = await getDB()
-    const result = await db.getAll(storeName)
-    setData(result)
-    setLoading(false)
+    setLoading(true)
+    try {
+      const db = await getDB()
+      const result = await db.getAll(storeName)
+      setData(result)
+    } finally {
+      setLoading(false)
+    }
   }, [storeName])
 
   useEffect(() => {
