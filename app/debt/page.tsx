@@ -2,6 +2,8 @@
 
 import CardList from '@/app/debt/_components/card-list'
 import CreditCardForm from '@/components/credit-card-form'
+import ModalForm from '@/components/modal-form'
+import { Button } from '@/components/ui/button'
 import { useIndexedStore } from '@/hooks/useIndexedStore'
 import { CreditCard } from '@/types/card'
 import { CreditCard as CreditCardIcon, Plus } from 'lucide-react'
@@ -78,13 +80,10 @@ export default function DebtsPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className='inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors'
-            >
+            <Button onClick={() => setIsModalOpen(true)}>
               <Plus size={16} />
               Agregar tarjeta
-            </button>
+            </Button>
           </div>
         </div>
       </header>
@@ -111,40 +110,20 @@ export default function DebtsPage() {
         )}
       </main>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
-            <div className='p-6'>
-              <h3 className='text-lg font-bold mb-4'>Agregar nueva tarjeta</h3>
-              <CreditCardForm
-                formData={formData}
-                onInputChange={handleInputChange}
-                onSubmit={handleSubmit}
-              />
-            </div>
-            <div className='flex justify-end gap-3 p-4 border-t border-gray-200'>
-              {isLoading ? (
-                <p className='text-sm text-gray-500'>Guardando...</p>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg'
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className='px-4 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg'
-                  >
-                    Confirmar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          title='Agregar nueva tarjeta'
+          isLoading={isLoading}
+          isOpen={isModalOpen}
+          onSubmit={handleSubmit}
+          setOpen={setIsModalOpen}
+        >
+          <CreditCardForm
+            formData={formData}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
+          />
+        </ModalForm>
       )}
     </div>
   )

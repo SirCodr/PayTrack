@@ -1,12 +1,10 @@
 'use client'
 
+import ModalForm from '@/components/modal-form'
 import PurchaseForm from '@/components/purchase-form'
+import { Button } from '@/components/ui/button'
 import { useIndexedStore } from '@/hooks/useIndexedStore'
-import {
-  formatCurrency,
-  getNextDate,
-  calculateUsagePercent
-} from '@/lib/utils/format'
+import { formatCurrency, calculateUsagePercent } from '@/lib/utils/format'
 import { CreditCard } from '@/types/card'
 import { Purchase } from '@/types/purchase'
 import {
@@ -36,7 +34,7 @@ const initialFormData: Purchase = {
   amount: 0,
   installments: 1,
   interestRate: 0,
-  date: '',
+  date: new Date().toISOString(),
   firstChargeDate: ''
 }
 
@@ -51,13 +49,14 @@ export default function CardDetailHeader({ card }: CardDetailHeaderProps) {
   const available = card.limit - card.currentBalance
   const usage = calculateUsagePercent(card.currentBalance, card.limit)
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  const updateField = (
+    name: string,
+    value: string | number,
+    type: 'number' | 'string' | 'date' = 'string'
   ) => {
-    const { name, value, dataset } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: dataset.type === 'number' ? Number(value) : value
+      [name]: type === 'number' ? Number(value) : value
     }))
   }
 
@@ -84,7 +83,7 @@ export default function CardDetailHeader({ card }: CardDetailHeaderProps) {
       setIsLoading(false)
     }
   }
-
+  console.log(formData.date)
   return (
     <div className={`bg-linear-to-br ${gradient} text-white`}>
       {/* Barra superior */}
@@ -101,13 +100,10 @@ export default function CardDetailHeader({ card }: CardDetailHeaderProps) {
           <h1 className='text-lg font-semibold'>{card.name}</h1>
         </div>
         <span className='text-sm font-mono opacity-80'>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className='inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors'
-          >
+          <Button onClick={() => setIsModalOpen(true)}>
             <Plus size={16} />
             Agregar Compra
-          </button>
+          </Button>
         </span>
       </div>
 
@@ -158,38 +154,19 @@ export default function CardDetailHeader({ card }: CardDetailHeaderProps) {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black'>
-          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
-            <div className='p-6'>
-              <h3 className='text-lg font-bold mb-4'>Agregar nueva compra</h3>
-              <PurchaseForm
-                formData={formData}
-                onSubmit={handleSubmit}
-                onInputChange={handleInputChange}
-              />
-            </div>
-            <div className='flex justify-end gap-3 p-4 border-t border-gray-200'>
-              {isLoading ? (
-                <p className='text-sm text-gray-500'>Guardando...</p>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg'
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className='px-4 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg'
-                  >
-                    Confirmar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <ModalForm
+          isOpen={isModalOpen}
+          title='Agregar nueva compra'
+          isLoading={isLoading}
+          onSubmit={handleSubmit}
+          setOpen={setIsModalOpen}
+        >
+          <PurchaseForm
+            formData={formData}
+            onSubmit={handleSubmit}
+            onInputChange={updateField}
+          />
+        </ModalForm>
       )}
     </div>
   )
